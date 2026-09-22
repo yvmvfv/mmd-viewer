@@ -1,13 +1,51 @@
-/* 最小SW: アプリシェルのオフラインキャッシュ */
-const CACHE = "mmd-viewer-v1";
-const ASSETS = ["./", "index.html", "manifest.webmanifest"];
+/* アプリシェルのオフラインキャッシュ。
+ * index.htmlはネットワーク優先（更新が届くように）、
+ * ハッシュ付きアセットはキャッシュ優先。 */
+const CACHE = "mmd-viewer-v2";
+const CORE = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches
+      .open(CACHE)
+      .then((c) => c.addAll(CORE))
+      .then(() => self.skipWaiting()),
+  );
 });
+
 self.addEventListener("activate", (e) => {
-  e.waitUntil(clients.claim());
+  e.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => clients.claim()),
+  );
 });
+
 self.addEventListener("fetch", (e) => {
-  e.respondWith(caches.match(e.request).then((hit) => hit || fetch(e.request)));
+  const url = new URL(e.request.url);
+  if (e.request.method !== "GET" || url.origin !== location.origin) return;
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy));
+          return res;
+        })
+        .catch(() => caches.match(e.request).then((hit) => hit || caches.match("index.html"))),
+    );
+    return;
+  }
+  e.respondWith(
+    caches.match(e.request).then(
+      (hit) =>
+        hit ||
+        fetch(e.request).then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy));
+          return res;
+        }),
+    ),
+  );
 });
