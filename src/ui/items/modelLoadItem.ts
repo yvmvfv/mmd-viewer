@@ -4,7 +4,7 @@ import { isAssetFile } from "../../loaders/supportedFormats";
 import { isZipFile, unzipToFiles } from "../../loaders/zipLoader";
 import { focusCameraOnMesh } from "../../scene/camera";
 import { DEFAULT_OUTLINE_WIDTH, setOutlineWidth } from "../../scene/modelAdjust";
-import { forgetModel, getMmdModel } from "../../motion/motionService";
+import { disposeModel, forgetModel, getMmdModel } from "../../motion/motionService";
 import type { SceneManager } from "../../scene/sceneManager";
 import type { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import { activeModelStore } from "../../state/activeModel";
@@ -392,7 +392,7 @@ export class ModelLoadItem implements MenuItem {
       this.status = `再読込中: ${old.fileName}`;
       this.rerender();
       this.teardownShadows(old.root);
-      forgetModel(old.root);
+      disposeModel(old.root);
       old.container.removeAllFromScene();
       old.container.dispose();
       const loaded = await loadMmdFromFiles(old.sourceFiles, this.scene, old.sourceModel);
@@ -411,7 +411,7 @@ export class ModelLoadItem implements MenuItem {
     if (idx < 0) return;
     const [old] = this.models.splice(idx, 1);
     this.teardownShadows(old.root);
-    forgetModel(old.root);
+    disposeModel(old.root);
     old.container.removeAllFromScene();
     old.container.dispose();
     if (this.activeId === id) this.activeId = this.models.length > 0 ? this.models[this.models.length - 1].id : null;

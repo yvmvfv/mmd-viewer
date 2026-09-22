@@ -188,6 +188,24 @@ export function forgetModel(root: MmdMesh): void {
   boundAnims.delete(root);
 }
 
+/** ランタイムからの切り離し＋破棄（描画ループの参照切れ防止） */
+export function disposeModel(root: MmdMesh): void {
+  const model = modelMap.get(root);
+  if (model) {
+    try {
+      model.setRuntimeAnimation(null);
+    } catch {
+      /* ignore */
+    }
+    try {
+      model._dispose();
+    } catch {
+      /* ignore */
+    }
+  }
+  forgetModel(root);
+}
+
 type PlayListener = (playing: boolean) => void;
 const playListeners = new Set<PlayListener>();
 type AppliedListener = (applied: boolean) => void;
