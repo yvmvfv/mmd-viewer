@@ -48,6 +48,11 @@ export async function rebuildRuntime(scene: Scene, physics: IMmdPhysics | null):
   const wasPlaying = runtime ? runtime.isAnimationPlaying : true;
   const curTime = runtime ? runtime.currentFrameTime : 0;
   if (runtime) {
+    try {
+      runtime.unregister(scene);
+    } catch {
+      /* ignore */
+    }
     runtime.dispose(scene);
     runtime = null;
   }
@@ -64,6 +69,10 @@ export async function rebuildRuntime(scene: Scene, physics: IMmdPhysics | null):
     }
   }
   for (const root of knownRoots) {
+    if (root.isDisposed()) {
+      knownRoots.delete(root);
+      continue;
+    }
     try {
       const m = runtime.createMmdModel(root);
       modelMap.set(root, m);

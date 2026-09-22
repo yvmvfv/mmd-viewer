@@ -392,6 +392,7 @@ export class ModelLoadItem implements MenuItem {
       this.status = `再読込中: ${old.fileName}`;
       this.rerender();
       this.teardownShadows(old.root);
+      forgetModel(old.root);
       old.container.removeAllFromScene();
       old.container.dispose();
       const loaded = await loadMmdFromFiles(old.sourceFiles, this.scene, old.sourceModel);
