@@ -384,6 +384,30 @@ export class ModelLoadItem implements MenuItem {
     this.rerender();
   }
 
+  /** 破棄は1手順ずつtry/catch（どこで落ちてもUIは固めない） */
+  private safeDispose(old: SceneModelEntry): void {
+    try {
+      this.teardownShadows(old.root);
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      disposeModel(old.root);
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      old.container.removeAllFromScene();
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      old.container.dispose();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   private async reload(id: number): Promise<void> {
     const idx = this.models.findIndex((m) => m.id === id);
     if (idx < 0) return;
@@ -391,10 +415,7 @@ export class ModelLoadItem implements MenuItem {
     try {
       this.status = `再読込中: ${old.fileName}`;
       this.rerender();
-      this.teardownShadows(old.root);
-      disposeModel(old.root);
-      old.container.removeAllFromScene();
-      old.container.dispose();
+      this.safeDispose(old);
       const loaded = await loadMmdFromFiles(old.sourceFiles, this.scene, old.sourceModel);
       this.setupShadows(loaded.root);
       setOutlineWidth(loaded.root, DEFAULT_OUTLINE_WIDTH);
@@ -410,10 +431,7 @@ export class ModelLoadItem implements MenuItem {
     const idx = this.models.findIndex((m) => m.id === id);
     if (idx < 0) return;
     const [old] = this.models.splice(idx, 1);
-    this.teardownShadows(old.root);
-    disposeModel(old.root);
-    old.container.removeAllFromScene();
-    old.container.dispose();
+    this.safeDispose(old);
     if (this.activeId === id) this.activeId = this.models.length > 0 ? this.models[this.models.length - 1].id : null;
     this.status = this.models.length === 0 ? "未読み込み" : `全${this.models.length}件`;
     this.rerender();

@@ -191,16 +191,21 @@ export function forgetModel(root: MmdMesh): void {
 /** ランタイムからの切り離し＋破棄（描画ループの参照切れ防止） */
 export function disposeModel(root: MmdMesh): void {
   const model = modelMap.get(root);
-  if (model) {
+  if (model && runtime) {
     try {
       model.setRuntimeAnimation(null);
     } catch {
       /* ignore */
     }
     try {
-      model._dispose();
-    } catch {
-      /* ignore */
+      runtime.destroyMmdModel(model);
+    } catch (e) {
+      console.error(e);
+      try {
+        model._dispose();
+      } catch {
+        /* ignore */
+      }
     }
   }
   forgetModel(root);
