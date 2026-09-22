@@ -1,0 +1,363 @@
+/* スタジオメニュー: 右90%ドロワー + 左アイコンレール + 右詳細 */
+#scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.12);
+  z-index: 38;
+}
+#drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 90vw;
+  max-width: 480px;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(22, 25, 34, 0.6);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  /* 上下いっぱいまで伸ばすため角丸なし */
+  /* PWA単体ではステータスバーの下に潜るためセーフエリア分空ける */
+  padding-top: env(safe-area-inset-top, 0px);
+  visibility: hidden;
+  transform: translateX(102%);
+  transition: transform 0.24s ease, visibility 0.24s;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+#drawer.open { transform: translateX(0); visibility: visible; }
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.drawer-header h2 { margin: 0; font-size: 15px; letter-spacing: 0.04em; }
+#closeButton {
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+}
+#menuItems {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+}
+#menuRail {
+  width: 64px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  overflow-y: auto;
+}
+.rail-button {
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+}
+.rail-button.active {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+#menuDetail {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 14px 14px 12px;
+}
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menu-section h3 { margin: 4px 0 0; font-size: 11px; }
+.menu-section p { margin: 0; font-size: 10px; opacity: 0.75; }
+.guide-card {
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 12px;
+}
+.guide-title { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.guide-sub { font-size: 10px; opacity: 0.75; line-height: 1.6; }
+.add-group {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.add-group-title { font-size: 11px; font-weight: 700; }
+.add-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.09);
+  color: #fff;
+  font-size: 11px;
+  width: 100%;
+}
+.add-row small { opacity: 0.7; font-size: 9px; letter-spacing: 0.06em; }
+.add-row.sub { background: transparent; }
+.menu-section input[type="color"] { width: 100%; height: 40px; }
+.menu-section input[type="range"] { width: 100%; }
+.status { font-size: 10px; opacity: 0.85; word-break: break-all; }
+
+/* スタジオ設定 */
+.studio-grid {
+  display: flex;
+  gap: 8px;
+}
+.studio-grid label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10px;
+}
+.studio-grid input[type="color"] {
+  width: 100%;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  background: transparent;
+}
+.menu-section select {
+  width: 100%;
+  font-size: 11px;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* 録画進捗（録画ボタン直下） */
+#recProg {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.35);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
+#recProg[hidden] { display: none; }
+#recProgFill {
+  height: 6px;
+  width: 0%;
+  border-radius: 999px;
+  background: #ff6b61;
+}
+#recProgLabel {
+  font-size: 10px;
+  color: #ff8a80;
+  font-variant-numeric: tabular-nums;
+}
+.scene-card {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.scene-title { font-size: 11px; font-weight: 700; }
+.scene-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 6px 6px 6px 8px;
+}
+.scene-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.scene-state {
+  flex: none;
+  font-size: 10px;
+  color: #7ee0d2;
+  background: transparent;
+  border: none;
+  padding: 4px 2px;
+}
+.scene-state.active { color: #7ee0d2; font-weight: 700; }
+.scene-icon-btn {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.07);
+  color: #9be8dc;
+  padding: 0;
+}
+.scene-icon-btn.danger { color: #f19999; }
+
+/* 複数モデル候補（名前＋サイズ） */
+.candidate-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 8px 10px;
+  color: #fff;
+  font-size: 10px;
+}
+.candidate-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.candidate-size {
+  flex: none;
+  opacity: 0.7;
+  font-size: 10px;
+}
+
+/* 保存済みモデル（名前＋サイズ＋再追加/削除） */
+.lib-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 6px 6px 6px 8px;
+}
+.lib-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lib-name {
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lib-size {
+  font-size: 10px;
+  opacity: 0.6;
+}
+.lib-add {
+  flex: none;
+  font-size: 10px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.09);
+  color: #fff;
+}
+
+/* ON/OFFスイッチ（ON時は色付きで視認性確保） */
+.switch {
+  flex: none;
+  min-width: 52px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 7px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.55);
+}
+.switch.on {
+  background: #0ea5a4;
+  border-color: transparent;
+  color: #fff;
+}
+
+/* 操作モデル選択の数値行 */
+.num-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 6px 8px;
+}
+.num-row input {
+  width: 90px;
+  font-size: 11px;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 8px;
+  padding: 5px 6px;
+  text-align: right;
+}
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+/* もーふ編集 */
+.morph-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0;
+}
+.morph-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+}
+.morph-value {
+  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+.morph-item input[type="range"] {
+  width: 100%;
+  accent-color: #7ee0d2;
+}

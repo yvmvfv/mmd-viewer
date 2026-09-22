@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>mmd-viewer</title>
+    <style>
+      html,body{background:#000;margin:0}
+      /* バンドル読込完了まで素のHTMLを見せない */
+      html:not(.ready) #app{visibility:hidden}
+      #boot{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;color:#555;font:13px system-ui,sans-serif;letter-spacing:.2em}
+      html.ready #boot{display:none}
+    </style>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  </head>
+  <body>
+    <div id="boot">mmd-viewer</div>
+    <div id="app">
+      <canvas id="renderCanvas"></canvas>
+
+      <!-- 右上ハンバーガー -->
+      <button id="menuButton" aria-label="設定を開く" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- モデル読込時だけ出る右操作バー -->
+      <nav id="modeBar" hidden aria-label="操作切替">
+        <button data-mode="camera" class="active" title="カメラ操作" aria-label="カメラ操作">◎</button>
+        <button data-mode="move" title="モデル移動" aria-label="モデル移動">✥</button>
+        <button data-mode="extra3" title="準備中" aria-label="準備中3">⟳</button>
+        <button data-mode="extra4" title="準備中" aria-label="準備中4">✋</button>
+      </nav>
+
+      <!-- 録画中の進捗バッジ -->
+      <div id="recBadge" hidden><span id="recText">●REC</span></div>
+
+      <!-- メニュー非表示時に下へ出る再生バー -->
+      <div id="playerBar" hidden>
+        <div class="pb-row">
+          <span id="pbCur" class="pb-time">0:00</span>
+          <input id="pbSeek" type="range" min="0" max="1" step="1" value="0" aria-label="シーク" />
+          <span id="pbDur" class="pb-time">0:00</span>
+        </div>
+        <div class="pb-row">
+          <button id="pbPlay" aria-label="再生停止">▶</button>
+          <span class="pb-spacer"></span>
+          <span class="pb-speed-label">速度</span>
+          <button id="pbSpeed">1×</button>
+        </div>
+      </div>
+
+      <!-- 移動モード時の下部角度調整バー -->
+      <div id="transformBar" hidden>
+        <div class="axis-seg" role="tablist" aria-label="軸選択">
+          <button data-axis="x" class="active">X</button>
+          <button data-axis="y">Y</button>
+          <button data-axis="z">Z</button>
+        </div>
+        <button id="rotMinus" class="tbtn" title="-5度" aria-label="マイナス">⟲</button>
+        <input id="rotSlider" type="range" min="-180" max="180" step="1" value="0" aria-label="角度" />
+        <button id="rotPlus" class="tbtn" title="+5度" aria-label="プラス">⟳</button>
+        <button id="rotReset" aria-label="0度へ戻す"><span id="rotValue">0°</span><small>0度へ戻す</small></button>
+      </div>
+
+      <!-- 右90%ドロワー -->
+      <div id="scrim" hidden></div>
+      <aside id="drawer" aria-hidden="true">
+        <div class="drawer-header">
+          <h2>スタジオメニュー</h2>
+          <button id="closeButton" aria-label="閉じる">×</button>
+        </div>
+        <div id="menuItems">
+          <nav id="menuRail" aria-label="メニュー"></nav>
+          <div id="menuDetail"></div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

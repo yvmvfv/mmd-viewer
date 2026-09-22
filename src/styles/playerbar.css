@@ -1,0 +1,58 @@
+/* メニュー非表示時に下へ出る再生バー */
+#playerBar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  z-index: 30;
+  width: min(480px, calc(100vw - 24px));
+  padding: 8px 12px 10px;
+  background: rgba(22, 25, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10px;
+  color: #fff;
+}
+#playerBar[hidden] { display: none; }
+.pb-row { display: flex; align-items: center; gap: 8px; }
+#pbSeek { flex: 1; min-width: 0; accent-color: #7ee0d2; }
+.pb-time { flex: none; opacity: 0.8; font-variant-numeric: tabular-nums; }
+.pb-spacer { flex: 1; }
+#pbPlay {
+  width: 38px;
+  height: 38px;
+  font-size: 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+}
+.pb-speed-label { opacity: 0.7; }
+#pbSpeed {
+  font-size: 11px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 録画中の進捗バッジ（左上） */
+#recBadge {
+  position: fixed;
+  left: 12px;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  z-index: 30;
+  padding: 7px 12px;
+  background: rgba(22, 25, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 11px;
+  color: #ff6b61;
+  font-variant-numeric: tabular-nums;
+}
+#recBadge[hidden] { display: none; }
