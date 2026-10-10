@@ -8,11 +8,10 @@
 #drawer {
   position: fixed;
   top: 0;
+  bottom: 0;
   right: 0;
   width: 90vw;
   max-width: 480px;
-  height: 100vh;
-  height: 100dvh;
   background: rgba(22, 25, 34, 0.6);
   border-left: 1px solid rgba(255, 255, 255, 0.12);
   /* 上下いっぱいまで伸ばすため角丸なし */
